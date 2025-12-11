@@ -19,6 +19,9 @@ public class MatchModel {
   private long startTime;
   private long endTime;
 
+  private long kickoffAt;
+  private long endsAt;
+
  
     public MatchModel() {}
 
@@ -113,6 +116,22 @@ public class MatchModel {
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
+    }
+
+    public long getKickoffAt() {
+        return kickoffAt;
+    }
+
+    public void setKickoffAt(long kickoffAt) {
+        this.kickoffAt = kickoffAt;
+    }
+
+    public long getEndsAt() {
+        return endsAt;
+    }   
+
+    public void setEndsAt(long endsAt) {
+        this.endsAt = endsAt;
     }
 
 }
