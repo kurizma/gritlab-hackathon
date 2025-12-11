@@ -46,6 +46,7 @@ public class BetController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bet);
     }
     // ----------------- // 
+    
     @GetMapping("/players/{playerName}/bets")
     public ResponseEntity<List<Bet>> getPlayerBets(
         @PathVariable String playerName,

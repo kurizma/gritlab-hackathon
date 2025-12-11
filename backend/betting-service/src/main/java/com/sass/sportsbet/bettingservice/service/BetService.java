@@ -36,7 +36,7 @@ public class BetService {
 
         // 2) Check balance >= stake (no transaction yet, just validation)
         if (player.balance() < request.getStake()) {
-            throw new IllegalStateException("Insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         }
 
         double odds = 2.0; // placeholder for now
