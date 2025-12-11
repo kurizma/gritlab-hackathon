@@ -20,4 +20,11 @@ public class BettingExceptionHandler {
                 .forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
         return errors;
     }
+    @ExceptionHandler(InsufficientBalanceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInsufficientBalance(InsufficientBalanceException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return error;
+    }
 }
