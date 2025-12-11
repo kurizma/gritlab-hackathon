@@ -20,4 +20,11 @@ public class PlayerClient {
                 .retrieve()
                 .body(PlayerResponse.class);
     }
+    public void createTransaction(String playerId, TransactionRequest request) {
+        restClient.post()
+                .uri("/players/{playerId}/transactions", playerId)
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+    }
 }

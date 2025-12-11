@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sass.sportsbet.bettingservice.client.PlayerClient;
 import com.sass.sportsbet.bettingservice.client.PlayerResponse;
+import com.sass.sportsbet.bettingservice.client.TransactionRequest;
 import com.sass.sportsbet.bettingservice.exception.InsufficientBalanceException;
 import com.sass.sportsbet.bettingservice.model.Bet;
 import com.sass.sportsbet.bettingservice.model.BetSelection;
@@ -62,7 +63,20 @@ public class BetService {
                 .selections(List.of(selection))
                 .build();
 
-        return betRepository.save(bet);
+        // 4) Save bet first to get betId
+        bet = betRepository.save(bet);
+
+        // 5) Call player-service to DEBIT stake and create transaction
+        TransactionRequest txReq;
+        txReq = new TransactionRequest(
+                "DEBIT",
+                request.getStake(),
+                "Stake for bet " + bet.getId(),
+                bet.getId()
+        );
+        playerClient.createTransaction(player.id(), txReq);
+
+        return bet;
     }
 
         public Bet placeCombinationBet(CombinationBetRequest request) {
@@ -97,7 +111,17 @@ public class BetService {
                 .selections(selections)
                 .build();
 
-        return betRepository.save(bet);
+        bet = betRepository.save(bet);
+
+        TransactionRequest txReq = new TransactionRequest(
+                "DEBIT",
+                request.getStake(),
+                "Stake for combo bet " + bet.getId(),
+                bet.getId()
+        );
+        playerClient.createTransaction(player.id(), txReq);
+
+        return bet;
         }
 
 
