@@ -1,8 +1,10 @@
-package com.sass.sportsbet.match_service;
+package com.sass.sportsbet.matchservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication
 public class MatchServiceApplication {
 
