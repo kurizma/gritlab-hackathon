@@ -28,7 +28,7 @@ public class MatchService {
         return matchRepository.findByStatus(MatchStatus.FINISHED);
     }
 
-    public void seedMatchesIfEmpty(List<MatchSeedDTO> seeds, long startupTimeMs) {
+    public void seedMatchesIfEmpty(List<MatchSeedDTO> seeds, long startupTime) {
         if (matchRepository.count() > 0) return;
 
         for (MatchSeedDTO dto: seeds) {
@@ -39,8 +39,10 @@ public class MatchService {
             m.setMatchDuration(dto.match_duration);
             m.setStartTimeDelay(dto.start_time_delay); 
             
-            long start = startupTimeMs + dto.start_time_delay * 1000L;
+            long start = startupTime + dto.start_time_delay * 1000L;
             long end = start + dto.match_duration * 1000L;
+            m.setKickoffAt(start);
+            m.setEndsAt(end);
             m.setStartTime(start);
             m.setEndTime(end);
             m.setStatus(MatchStatus.UPCOMING);
