@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: match-service
+              uri: http://localhost:8081
+              predicates:
+                - Path=/matches/**, /matches/finished/**
+            - id: player-service
+              uri: http://localhost:8082
+              predicates:
+                - Path=/players/**
+            - id: betting-service
+              uri: http://localhost:8083
+              predicates:
+                - Path=/bets/**
+            - id: history-service
+              uri: http://localhost:8084
+              predicates:
+                - Path=/players/*/bets, /players/*/transactions
