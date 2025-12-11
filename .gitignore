@@ -4,5 +4,8 @@ node_modules/
 # macOS Finder metadata
 .DS_Store
 **/.DS_Store
+
+#local
 .note.md
 .ENDPOINT.md
+backend/openapi.yaml

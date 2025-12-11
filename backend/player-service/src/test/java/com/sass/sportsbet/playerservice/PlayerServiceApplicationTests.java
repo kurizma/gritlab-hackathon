@@ -1,4 +1,4 @@
-package com.sass.sportsbet.player_service;
+package com.sass.sportsbet.playerservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
