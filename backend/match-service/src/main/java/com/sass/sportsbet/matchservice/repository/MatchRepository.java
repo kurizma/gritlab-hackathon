@@ -10,3 +10,4 @@ import com.sass.sportsbet.matchservice.model.MatchStatus;
 public interface MatchRepository extends MongoRepository<MatchModel, String> {
     List<MatchModel> findByStatus(MatchStatus status);
 }
+

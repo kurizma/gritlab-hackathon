@@ -48,4 +48,9 @@ public class MatchService {
             matchRepository.save(m); //Save to Mongo DB
         }
     }
+
+    public void clearAllMatches() {
+        matchRepository.deleteAll();
+    }
+
 }
