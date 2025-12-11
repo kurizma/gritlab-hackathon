@@ -1,12 +1,14 @@
 package com.sass.sportsbet.matchservice.controller;
 
-import com.sass.sportsbet.matchservice.model.MatchModel;
-import com.sass.sportsbet.matchservice.service.MatchService;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.sass.sportsbet.matchservice.model.MatchModel;
+import com.sass.sportsbet.matchservice.service.MatchService;
 
 @RestController
 @RequestMapping("/matches")
@@ -29,6 +31,12 @@ public class MatchController {
     public List<MatchModel> getFinishedMatches() {
         return matchService.getFinishedMatches();
     }
+
+    @GetMapping("/{matchId}")
+    public MatchModel getMatchById(@PathVariable String matchId) {
+        return matchService.getMatchById(matchId);
+    }
+
 }
 
 

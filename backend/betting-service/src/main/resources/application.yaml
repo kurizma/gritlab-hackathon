@@ -4,4 +4,14 @@ server:
 spring:
   application:
     name: betting-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: betting-service
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "com.sass.sportsbet.bettingservice.event"
+    listener:
+      missing-topics-fatal: false
+
 

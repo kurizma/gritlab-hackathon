@@ -1,13 +1,13 @@
 package com.sass.sportsbet.matchservice.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.sass.sportsbet.matchservice.model.MatchModel;
 import com.sass.sportsbet.matchservice.model.MatchSeedDTO;
 import com.sass.sportsbet.matchservice.model.MatchStatus;
 import com.sass.sportsbet.matchservice.repository.MatchRepository;
-
-import java.util.List;
 
 @Service
 public class MatchService {
@@ -50,6 +50,11 @@ public class MatchService {
             matchRepository.save(m); //Save to Mongo DB
         }
     }
+    public MatchModel getMatchById(String matchId) {
+    return matchRepository.findById(matchId)
+            .orElseThrow(() -> new RuntimeException("Match not found"));
+    }
+
 
     public void clearAllMatches() {
         matchRepository.deleteAll();
