@@ -109,4 +109,11 @@ public class BetService {
                 .odds(odds)
                 .build();
     }
+    public List<Bet> getBetsForPlayer(String playerName, BetStatus status) {
+    if (status == null) {
+        return betRepository.findByPlayerNameIgnoreCase(playerName);
+    }
+    return betRepository.findByPlayerNameIgnoreCaseAndStatus(playerName, status);
+}
+
 }
