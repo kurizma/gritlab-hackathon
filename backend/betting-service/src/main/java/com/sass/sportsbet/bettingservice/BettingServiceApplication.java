@@ -1,4 +1,4 @@
-package com.sass.sportsbet.betting_service;
+package com.sass.sportsbet.bettingservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
