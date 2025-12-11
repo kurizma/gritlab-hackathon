@@ -1,0 +1,161 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  color: #1f1f1f;
+}
+
+.layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.toast {
+  position: sticky;
+  top: 8px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.toast-error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+.toast-info {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+}
+
+.subcard {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 12px;
+  background: #f9fafb;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input, select, button {
+  padding: 8px;
+  font-size: 14px;
+}
+
+button {
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+button.secondary {
+  background: #6b7280;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+}
+
+.chip {
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #111827;
+  border-radius: 16px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.chip.active {
+  border-color: #2563eb;
+  background: #e0e7ff;
+  color: #1d4ed8;
+}
+
+.odds-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.odds-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #111827;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.odds-tag.home {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.odds-tag.draw {
+  border-color: #e5e7eb;
+  background: #f9fafb;
+}
+
+.odds-tag.away {
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.helper-row {
+  margin-bottom: 8px;
+}
+
