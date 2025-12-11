@@ -6,14 +6,18 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.sass.sportsbet.bettingservice.client.MatchClient;
+import com.sass.sportsbet.bettingservice.client.MatchResponse;
 import com.sass.sportsbet.bettingservice.client.PlayerClient;
 import com.sass.sportsbet.bettingservice.client.PlayerResponse;
 import com.sass.sportsbet.bettingservice.client.TransactionRequest;
+import com.sass.sportsbet.bettingservice.event.MatchFinishedEvent;
 import com.sass.sportsbet.bettingservice.exception.InsufficientBalanceException;
 import com.sass.sportsbet.bettingservice.model.Bet;
 import com.sass.sportsbet.bettingservice.model.BetSelection;
 import com.sass.sportsbet.bettingservice.model.BetStatus;
 import com.sass.sportsbet.bettingservice.model.BetType;
+import com.sass.sportsbet.bettingservice.model.MatchStatus;
 import com.sass.sportsbet.bettingservice.repository.BetRepository;
 import com.sass.sportsbet.bettingservice.request.BetSelectionRequest;
 import com.sass.sportsbet.bettingservice.request.CombinationBetRequest;
@@ -24,23 +28,42 @@ public class BetService {
 
     private final BetRepository betRepository;
     private final PlayerClient playerClient;
+    private final MatchClient matchClient;
 
-    // Constructor injection: Spring will pass both beans here
-    public BetService(BetRepository betRepository, PlayerClient playerClient) {
+    // Spring injects all three beans here
+    public BetService(
+            BetRepository betRepository,
+            PlayerClient playerClient,
+            MatchClient matchClient
+    ) {
         this.betRepository = betRepository;
         this.playerClient = playerClient;
+        this.matchClient = matchClient;
     }
 
     public Bet placeSingleBet(SingleBetRequest request) {
         // 1) Fetch player from player-service
         PlayerResponse player = playerClient.getPlayerByName(request.getPlayerName());
 
-        // 2) Check balance >= stake (no transaction yet, just validation)
+        // 2) Check balance >= stake
         if (player.balance() < request.getStake()) {
             throw new InsufficientBalanceException("Insufficient balance");
         }
 
-        double odds = 2.0; // placeholder for now
+        // 3) Fetch match from match-service
+        MatchResponse match = matchClient.getMatch(request.getMatchId());
+
+        // 4) Reject if match has started or finished
+        if (match.status() != MatchStatus.UPCOMING) {
+            throw new IllegalStateException("Match already started or finished");
+        }
+
+        // 5) Choose correct odds based on outcome
+        double odds = switch (request.getOutcome()) {
+            case HOME -> match.homeTeamOdds();
+            case DRAW -> match.drawOdds();
+            case AWAY -> match.awayTeamOdds();
+        };
 
         BetSelection selection = BetSelection.builder()
                 .matchId(request.getMatchId())
@@ -63,12 +86,11 @@ public class BetService {
                 .selections(List.of(selection))
                 .build();
 
-        // 4) Save bet first to get betId
+        // 6) Save bet to get betId
         bet = betRepository.save(bet);
 
-        // 5) Call player-service to DEBIT stake and create transaction
-        TransactionRequest txReq;
-        txReq = new TransactionRequest(
+        // 7) Debit player
+        TransactionRequest txReq = new TransactionRequest(
                 "DEBIT",
                 request.getStake(),
                 "Stake for bet " + bet.getId(),
@@ -79,20 +101,21 @@ public class BetService {
         return bet;
     }
 
-        public Bet placeCombinationBet(CombinationBetRequest request) {
-        // 1) Fetch player from player-service
+    public Bet placeCombinationBet(CombinationBetRequest request) {
+        // 1) Fetch player
         PlayerResponse player = playerClient.getPlayerByName(request.getPlayerName());
 
         // 2) Check balance >= stake
         if (player.balance() < request.getStake()) {
-                throw new InsufficientBalanceException("Insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         }
 
-        // 3) Build selections with placeholder odds
+        // 3) For each selection: fetch match, check status, pick correct odds
         List<BetSelection> selections = request.getSelections().stream()
-                .map(this::toBetSelectionPlaceholderOdds)
+                .map(this::toBetSelectionWithRealOdds)
                 .collect(Collectors.toList());
 
+        // 4) Multiply odds
         double finalOdds = selections.stream()
                 .mapToDouble(BetSelection::getOdds)
                 .reduce(1.0, (a, b) -> a * b);
@@ -122,22 +145,38 @@ public class BetService {
         playerClient.createTransaction(player.id(), txReq);
 
         return bet;
+    }
+
+    // Helper: uses MatchClient + status check + correct odds
+    private BetSelection toBetSelectionWithRealOdds(BetSelectionRequest req) {
+        MatchResponse match = matchClient.getMatch(req.getMatchId());
+
+        if (match.status() != MatchStatus.UPCOMING) {
+            throw new IllegalStateException("One of the matches already started or finished");
         }
 
+        double odds = switch (req.getOutcome()) {
+            case HOME -> match.homeTeamOdds();
+            case DRAW -> match.drawOdds();
+            case AWAY -> match.awayTeamOdds();
+        };
 
-    private BetSelection toBetSelectionPlaceholderOdds(BetSelectionRequest req) {
-        double odds = 2.0;
         return BetSelection.builder()
                 .matchId(req.getMatchId())
                 .outcome(req.getOutcome())
                 .odds(odds)
                 .build();
     }
-    public List<Bet> getBetsForPlayer(String playerName, BetStatus status) {
-    if (status == null) {
-        return betRepository.findByPlayerNameIgnoreCase(playerName);
-    }
-    return betRepository.findByPlayerNameIgnoreCaseAndStatus(playerName, status);
-}
 
+    public List<Bet> getBetsForPlayer(String playerName, BetStatus status) {
+        if (status == null) {
+            return betRepository.findByPlayerNameIgnoreCase(playerName);
+        }
+        return betRepository.findByPlayerNameIgnoreCaseAndStatus(playerName, status);
+    }
+
+    public void settleBetsForMatch(MatchFinishedEvent event) {
+        System.out.println("Settling bets for match " + event.matchId()
+                + " with result " + event.result());
+    }
 }
